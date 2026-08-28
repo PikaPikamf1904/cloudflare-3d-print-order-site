@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#14213d">
+  <title>3D Print Orders</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header><div><span class="eyebrow">ENRICHMENT PROGRAM</span><h1>3D Print Shop</h1><p>Pick your prints, add them to your cart, and submit your order.</p></div><button class="cart-jump" onclick="document.querySelector('#cart').scrollIntoView({behavior:'smooth'})">Cart <b id="cartCount">0</b></button></header>
+  <main>
+    <div id="notice" class="notice" hidden><strong>Schedule notice:</strong> <span id="noticeText"></span></div>
+    <section><h2>Choose your prints</h2><p class="muted">White and green are the standard colors. Red and multicolor cost more where offered.</p><div id="products" class="grid"></div></section>
+    <section id="cart" class="cart"><div class="section-title"><h2>Your cart</h2><strong id="total">$0.00</strong></div><div id="cartItems" class="empty">Your cart is empty.</div></section>
+    <section class="checkout"><h2>Order details</h2><form id="orderForm">
+      <label>First name<input name="firstName" maxlength="40" required autocomplete="given-name"></label>
+      <label>Class<select name="classColor" required><option value="">Choose class</option><option>Yellow</option><option>Blue</option></select></label>
+      <label>Email<input name="email" type="email" maxlength="120" required autocomplete="email"></label>
+      <label>Payment<select name="paymentMethod" required><option>Cash</option><option>Exact change</option></select></label>
+      <label class="full">Order notes <span>(optional)</span><textarea name="notes" maxlength="500" placeholder="Anything I should know?"></textarea></label>
+      <p class="full fineprint">Cash and change are accepted. Prices are subject to change, but once you submit your order, the checkout price is locked in.</p>
+      <button id="submitBtn" class="submit full" type="submit">Place order</button><div id="message" class="message full" role="status"></div>
+    </form></section>
+  </main>
+  <footer>Made for the school enrichment program.</footer>
+  <script src="/app.js"></script>
+</body>
+</html>

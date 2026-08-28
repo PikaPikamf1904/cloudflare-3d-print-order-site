@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "enrichment-3d-print-orders",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "none",
+    "run_worker_first": ["/", "/api/*", "/admin*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "enrichment-3d-print-orders-db",
+      "database_id": "08dcbecc-f86b-4902-9f89-d2db0869c8dc"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
+
