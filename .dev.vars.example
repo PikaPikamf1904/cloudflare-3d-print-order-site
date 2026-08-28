@@ -1,6 +1,0 @@
-# Copy to .dev.vars only on your own computer. Never commit actual values.
-ADMIN_KEY=replace-with-a-local-test-key
-STRIPE_SECRET_KEY=sk_test_replace_me
-STRIPE_WEBHOOK_SECRET=whsec_replace_me
-PAYPAL_CLIENT_ID=replace_me
-PAYPAL_CLIENT_SECRET=replace_me
