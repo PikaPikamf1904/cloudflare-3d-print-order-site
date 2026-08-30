@@ -87,6 +87,9 @@ object containing exactly these fields: `protocol`, `run_id`, `sequence`,
 `next_prompt`. Valid actions are `ack`, `next`, `stop`, and `needs_user`.
 For a probe, the reply must be `ack` and `next_prompt` must be empty.
 
+Replies must report the pinned model as either `Terra` (the reviewer product
+label) or `gpt-5.6-terra` (the exact locally verified CLI identifier); `Terra`
+is normalized locally to `gpt-5.6-terra`. Any other model value is rejected.
 Replies with a wrong author, an edited timestamp, a stale or duplicate comment
-ID, unrelated run or sequence, malformed JSON, an unexpected model setting, or
-an invalid source comment ID are rejected and recorded only in local state.
+ID, unrelated run or sequence, malformed JSON, an unexpected reasoning setting,
+or an invalid source comment ID are rejected and recorded only in local state.
