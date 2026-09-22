@@ -1,6 +1,8 @@
 # Dependencies and local Cloudflare state
 node_modules/
 .wrangler/
+.bolt/
+mcp.json
 
 # Local secrets and credentials
 .env
@@ -17,12 +19,18 @@ credentials.json
 backups/
 *.zip
 *.sql
+!migrations/*.sql
 *.csv
 customer-qr.png
 customer-qr.svg
+test-artifacts/
 
 # Logs and operating-system files
 *.log
 *.tmp
 .DS_Store
 Thumbs.db
+
+# Local-only Codex/GitHub handoff helper and state
+.codex-handoff/
+.handoff-worktree/

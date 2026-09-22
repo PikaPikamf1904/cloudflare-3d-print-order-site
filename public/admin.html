@@ -1,1 +1,76 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>3D Print Admin</title><link rel="stylesheet" href="/admin.css"></head><body><main><section id="login"><h1>Admin dashboard</h1><form><input id="key" type="password" autocomplete="current-password" placeholder="Admin key" required><button>Open dashboard</button></form><p id="error" role="alert"></p></section><section id="dash" hidden><header><h1>Dashboard</h1><button id="reload">Refresh</button><p id="notice" role="status"></p></header><section id="stats" class="cards"></section><section class="panel"><h2>Find orders</h2><div class="filters"><input id="q" placeholder="Name, email, or order ID"><select id="status"><option value="">All statuses</option><option>New</option><option>Printing</option><option>Ready</option><option>Complete</option><option>Cancelled</option><option>Historical</option></select><select id="payment"><option value="">Paid or unpaid</option><option>Paid</option><option>Unpaid</option></select><select id="class"><option value="">All classes</option><option>Yellow</option><option>Blue</option></select><select id="source"><option value="">Current and legacy</option><option>Current</option><option>Legacy</option></select><select id="deleted"><option value="active">Active</option><option value="deleted">Trash</option><option value="all">All</option></select><button id="clear">Clear</button><button id="export">Download CSV</button></div></section><section class="panel"><div id="orders" aria-live="polite">Loading orders…</div></section><section class="panel"><h2>Store settings</h2><form id="config"><input name="storeName" placeholder="Store name"><label><input type="checkbox" name="orderingOpen"> Ordering open</label><label><input type="checkbox" name="absenceEnabled"> Show absence notice</label><textarea name="absenceMessage" placeholder="Absence announcement"></textarea><textarea name="paymentInstructions" placeholder="Cash instructions"></textarea><textarea name="priceDisclaimer" placeholder="Price disclaimer"></textarea><fieldset><legend>Payment methods</legend><label><input type="checkbox" name="cashEnabled"> Cash</label><label><input type="checkbox" name="stripeEnabled"> Card payments</label><label><input type="checkbox" name="cashAppEnabled"> Cash App Pay through Stripe</label><label><input type="checkbox" name="paypalEnabled"> PayPal</label><select name="paypalMode"><option value="sandbox">PayPal sandbox</option><option value="live">PayPal live</option></select><p id="credentials"></p></fieldset><button>Save settings</button></form></section><section class="panel"><h2>Products</h2><div id="products"></div></section></section></main><dialog id="detail"><form method="dialog"><button aria-label="Close">×</button></form><div id="detailBody"></div></dialog><script src="/admin.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#6d3bd1"><meta name="robots" content="noindex,nofollow">
+  <title>3D Print Order Admin</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/admin.css"><script src="/theme.js" defer></script><script src="/product-tools.js" defer></script><script src="/product-admin.js" defer></script><script src="/admin.js" defer></script><script src="/bug-admin.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#admin-content">Skip to dashboard</a>
+  <section id="login-view" class="login-view">
+    <div class="login-card">
+      <div class="login-top"><span class="brand-mark" aria-hidden="true">3D</span><button class="icon-button theme-toggle" type="button" aria-label="Switch color theme"><span aria-hidden="true">☾</span></button></div>
+      <span class="eyebrow">PRIVATE ADMIN</span><h1>3D Print Order Admin</h1><p>Log in to manage orders, products, and store settings.</p>
+      <form id="login-form">
+        <label>Admin password<div class="password-field"><input id="admin-key" type="password" autocomplete="current-password" required autofocus><button id="show-password" type="button" aria-label="Show password">Show</button></div></label>
+        <div id="login-error" class="form-message" role="alert"></div>
+        <button id="login-button" class="button button-primary button-large" type="submit">Log in</button>
+      </form>
+      <a href="/">← Back to customer store</a>
+    </div>
+  </section>
+
+  <div id="dashboard-view" hidden>
+    <header class="admin-header"><div class="admin-header-inner"><div class="brand"><span class="brand-mark" aria-hidden="true">3D</span><span><small>ENRICHMENT PROGRAM</small><strong>Order Admin</strong></span></div><div class="admin-actions"><span id="connection-status" class="connection-pill"><i></i> Connected</span><a class="icon-button text-button" href="/" target="_blank" rel="noopener">View store</a><button id="refresh-button" class="icon-button text-button" type="button">Refresh</button><button class="icon-button theme-toggle" type="button" aria-label="Switch color theme"><span aria-hidden="true">☾</span></button><button id="logout-button" class="icon-button text-button" type="button">Log out</button></div></div></header>
+    <main id="admin-content" class="admin-main">
+      <div class="page-heading"><div><span class="eyebrow">STORE MANAGEMENT</span><h1>Dashboard</h1><p id="last-updated">Loading your store…</p></div></div>
+      <nav class="tabs" aria-label="Admin sections"><button class="tab active" data-tab="orders" aria-selected="true">Orders</button><button class="tab" data-tab="products" aria-selected="false">Products</button><button class="tab" data-tab="settings" aria-selected="false">Store settings</button><button class="tab" data-tab="bug-reports" aria-selected="false">Bug reports <b id="bug-report-badge" class="tab-badge" hidden>0</b></button></nav>
+
+      <section id="orders-tab" class="tab-panel">
+        <section id="stats" class="stat-grid" aria-label="Order totals"></section>
+        <section class="panel filter-panel">
+          <div class="panel-heading"><div><h2>Find orders</h2><p>Search and filter the current order list.</p></div><button id="filter-toggle" class="button button-secondary mobile-only" type="button" aria-expanded="false">Filters <b id="filter-count">0</b></button></div>
+          <div id="filters" class="filters">
+            <label class="search-field">Search<input id="q" type="search" placeholder="Name, email, or order ID"></label>
+            <label>Status<select id="status"><option value="">All statuses</option><option>New</option><option>Printing</option><option>Ready</option><option>Complete</option><option>Cancelled</option><option>Historical</option></select></label>
+            <label>Payment<select id="payment"><option value="">Paid and unpaid</option><option>Paid</option><option>Unpaid</option></select></label>
+            <label>Class<select id="class"><option value="">Yellow and Blue</option><option>Yellow</option><option>Blue</option></select></label>
+            <label>Source<select id="source"><option value="">Current and legacy</option><option>Current</option><option>Legacy</option></select></label>
+            <label>Deleted<select id="deleted"><option value="active">Active orders</option><option value="deleted">Trash</option><option value="all">Active and deleted</option></select></label>
+            <div class="filter-actions"><button id="clear-filters" class="button button-quiet" type="button">Clear filters</button><button id="export-button" class="button button-secondary" type="button">Download filtered CSV</button></div>
+          </div>
+        </section>
+        <section class="panel orders-panel">
+          <div class="panel-heading"><div><h2>Orders</h2><p id="order-count">Loading…</p></div></div>
+          <div id="orders-state" class="state-card"><span class="spinner" aria-hidden="true"></span> Loading orders…</div>
+          <div id="orders-table-wrap" class="table-wrap" hidden><table><thead><tr><th>Order</th><th>Customer</th><th>Class</th><th>Total</th><th>Status</th><th>Payment</th><th>Date</th><th><span class="sr-only">Action</span></th></tr></thead><tbody id="orders-table"></tbody></table></div>
+          <div id="orders-cards" class="order-cards" hidden></div>
+        </section>
+      </section>
+
+      <section id="products-tab" class="tab-panel" hidden>
+        <section class="panel"><div class="panel-heading"><div><h2>Products and colors</h2><p>Changes affect future orders only. Existing locked prices never change.</p></div></div><div id="products-state" class="state-card">Loading catalog…</div><div id="product-editor" class="product-editor"></div></section>
+      </section>
+
+      <section id="settings-tab" class="tab-panel" hidden>
+        <form id="settings-form" class="panel settings-form">
+          <div class="panel-heading"><div><h2>Store settings</h2><p>Control customer-facing messages and available payment methods.</p></div><button class="button button-primary" type="submit">Save settings</button></div>
+          <fieldset><legend>Store</legend><label>Store name<input name="storeName" maxlength="80" required></label><label class="toggle-row"><span><strong>Ordering open</strong><small>Allow customers to submit new orders.</small></span><input type="checkbox" name="orderingOpen"></label></fieldset>
+          <fieldset><legend>Announcements</legend><label class="toggle-row"><span><strong>Show absence announcement</strong><small>Display the message above the catalog.</small></span><input type="checkbox" name="absenceEnabled"></label><label>Announcement<textarea name="absenceMessage" maxlength="500" rows="4"></textarea></label></fieldset>
+          <fieldset><legend>Checkout messages</legend><label>Cash instructions<textarea name="paymentInstructions" maxlength="700" rows="3"></textarea></label><label>Price-lock disclaimer<textarea name="priceDisclaimer" maxlength="500" rows="3"></textarea></label></fieldset>
+          <fieldset><legend>Payment methods</legend><div class="warning-box">Greenlight Pay is a manual external payment link. The site cannot confirm Greenlight payments automatically. Card processors remain disabled.</div><label class="toggle-row"><span><strong>Cash</strong><small>Manual payment managed by the administrator.</small></span><input type="checkbox" name="cashEnabled" checked disabled></label><label class="toggle-row"><span><strong>Greenlight Pay</strong><small>Show the manual payment option at checkout.</small></span><input type="checkbox" name="greenlightEnabled"></label><label>Greenlight Pay URL<input type="url" name="greenlightUrl" maxlength="500" required placeholder="https://gl.me/…"></label><label class="toggle-row"><span><strong>Stripe card</strong><small id="stripe-credential">Online payments are disabled.</small></span><input type="checkbox" name="stripeEnabled" disabled></label><label class="toggle-row"><span><strong>Cash App Pay through Stripe</strong><small>Online payments are disabled.</small></span><input type="checkbox" name="cashAppEnabled" disabled></label><label class="toggle-row"><span><strong>PayPal</strong><small id="paypal-credential">Online payments are disabled.</small></span><input type="checkbox" name="paypalEnabled" disabled></label><label class="toggle-row"><span><strong>Venmo</strong><small>Online payments are disabled.</small></span><input type="checkbox" name="venmoEnabled" disabled></label><label>PayPal mode<select name="paypalMode" disabled><option value="sandbox">Sandbox</option><option value="live">Live</option></select></label></fieldset>
+          <div id="settings-message" class="form-message" role="status"></div>
+        </form>
+      </section>
+      <section id="bug-reports-tab" class="tab-panel" hidden>
+        <section id="bug-stats" class="stat-grid" aria-label="Bug report totals"></section>
+        <section class="panel filter-panel"><div class="panel-heading"><div><h2>Find bug reports</h2><p>Reports are private to this dashboard.</p></div><button id="bug-filter-toggle" class="button button-secondary mobile-only" type="button" aria-expanded="false">Filters</button></div><div id="bug-filters" class="filters"><label class="search-field">Search<input id="bug-q" type="search" placeholder="Report ID, description, or order ID"></label><label>Status<select id="bug-status"><option value="">All statuses</option><option value="new">New</option><option value="reviewing">Reviewing</option><option value="resolved">Resolved</option><option value="closed">Closed</option></select></label><label>Category<select id="bug-category"><option value="">All categories</option><option value="store_catalog">Store or catalog</option><option value="cart">Cart</option><option value="checkout">Checkout</option><option value="receipt">Receipt</option><option value="admin_login">Admin login</option><option value="accessibility">Accessibility</option><option value="other">Other</option></select></label><label>Priority<select id="bug-priority"><option value="">All priorities</option><option value="low">Low</option><option value="normal">Normal</option><option value="high">High</option></select></label><label>Sort<select id="bug-sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label><label>Deleted<select id="bug-deleted"><option value="active">Active reports</option><option value="deleted">Trash</option><option value="all">Active and deleted</option></select></label><div class="filter-actions"><button id="clear-bug-filters" class="button button-quiet" type="button">Clear filters</button></div></div></section>
+        <section class="panel orders-panel"><div class="panel-heading"><div><h2>Bug reports</h2><p id="bug-count">Loading…</p></div></div><div id="bug-state" class="state-card"><span class="spinner" aria-hidden="true"></span> Loading reports…</div><div id="bug-table-wrap" class="table-wrap" hidden><table><thead><tr><th>Report</th><th>Category</th><th>Priority</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="bug-table"></tbody></table></div><div id="bug-cards" class="order-cards" hidden></div></section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="order-dialog" class="order-dialog"><div class="drawer-header"><div><span class="eyebrow">ORDER DETAILS</span><h2 id="drawer-title">Order</h2></div><button id="close-drawer" class="icon-button" type="button" aria-label="Close order details">×</button></div><div id="order-detail" class="drawer-content"></div></dialog>
+  <dialog id="bug-report-dialog" class="order-dialog"><div class="drawer-header"><div><span class="eyebrow">BUG REPORT</span><h2 id="bug-drawer-title">Report</h2></div><button id="close-bug-drawer" class="icon-button" type="button" aria-label="Close bug report">×</button></div><div id="bug-detail" class="drawer-content"></div></dialog>
+  <dialog id="confirm-dialog" class="confirm-dialog"><form method="dialog"><h2 id="confirm-title">Confirm action</h2><p id="confirm-message"></p><div class="dialog-actions"><button value="cancel" class="button button-quiet">Cancel</button><button value="confirm" class="button button-danger">Confirm</button></div></form></dialog>
+  <div id="admin-toast" class="toast" role="status" aria-live="polite"></div>
+</body></html>

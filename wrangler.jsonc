@@ -8,7 +8,7 @@
     "directory": "./public",
     "binding": "ASSETS",
     "html_handling": "none",
-    "run_worker_first": ["/", "/api/*", "/admin*"]
+    "run_worker_first": true
   },
   "d1_databases": [
     {

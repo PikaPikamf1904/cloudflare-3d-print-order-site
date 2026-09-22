@@ -4,7 +4,13 @@
   "private": true,
   "scripts": {
     "deploy": "wrangler deploy",
-    "dev": "wrangler dev"
+    "dev": "wrangler dev",
+    "test:storefront": "node tests/storefront-smoke.mjs",
+    "test:frontend": "node tests/frontend-redesign.mjs",
+    "test:browser": "node tests/browser-ui.mjs",
+    "test:admin": "node tests/admin-redesign-integration.mjs",
+    "test:bug-reports": "node tests/bug-reports-integration.mjs",
+    "test:local": "node tests/full-local-verification.mjs"
   },
   "devDependencies": {
     "qrcode": "^1.5.4",

@@ -1,1 +1,64 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>3D Print Orders</title><link rel="stylesheet" href="/styles.css"></head><body><header class="shop-header"><div><span class="eyebrow">ENRICHMENT PROGRAM</span><h1 id="name">3D Print Orders</h1><p>Build your cart and see the exact total before ordering.</p></div><a class="cart-jump" href="#cart">Cart <b id="cart-count">0</b></a></header><main><aside id="notice" class="notice" hidden></aside><section class="catalog-section"><div class="section-heading"><div><span class="section-kicker">PICK YOUR PRINTS</span><h2>Product catalog</h2></div><p>Choose a color, then add it to your cart.</p></div><div id="products" class="grid" aria-live="polite"></div></section><section id="cart" class="cart"><div class="section-title"><div><span class="section-kicker">YOUR ORDER</span><h2>Cart <span id="cart-count-inline">(0 items)</span></h2></div><strong id="total">$0.00</strong></div><div id="items">Your cart is empty.</div><div class="cart-actions"><button id="clear-cart" type="button" class="ghost">Clear cart</button></div></section><section class="checkout"><div class="section-heading"><div><span class="section-kicker">ALMOST DONE</span><h2>Customer information</h2></div></div><form id="form"><label>First name<input name="firstName" required maxlength="40" autocomplete="given-name"></label><label>Class<select name="classColor" required><option>Yellow</option><option>Blue</option></select></label><label class="full">Email<input type="email" name="email" required autocomplete="email"></label><label class="full">Order notes <span>(optional)</span><textarea name="notes" maxlength="500"></textarea></label><div class="full policy"><p id="disclaimer">Prices are subject to change. Once you submit an order, the checkout price is locked in for that order.</p><p>Cash is accepted. Exact change is appreciated.</p></div><button class="submit full">Place order</button><div id="message" class="full" role="status"></div></form></section></main><div id="toast" role="status" aria-live="polite"></div><div class="mobile-cart"><a href="#cart"><span><b id="mobile-count">0</b> items</span><strong id="mobile-total">$0.00</strong><em>View cart</em></a></div><footer>Enrichment Program 3D Print Orders</footer><script src="/app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#6d3bd1">
+  <meta name="description" content="Order 3D printed enrichment projects and see the exact price before checkout.">
+  <link rel="canonical" href="https://enrichment-3d-print-orders.life-line-gaming-solutions.workers.dev/">
+  <title>3D Print Orders</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/theme.js" defer></script>
+  <script src="/product-tools.js" defer></script><script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#catalog">Skip to products</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="3D Print Orders home">
+        <span class="brand-mark" aria-hidden="true">3D</span>
+        <span><small>ENRICHMENT PROGRAM</small><strong id="store-name">3D Print Orders</strong></span>
+      </a>
+      <div class="header-actions">
+        <a class="header-link" href="/bug-report">Report a problem</a>
+        <button class="icon-button theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><span aria-hidden="true">☾</span></button>
+        <a class="cart-jump button button-primary" href="#cart"><span>Cart</span><strong id="header-cart-total">$0.00</strong><b id="header-cart-count">0</b></a>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="welcome" aria-labelledby="page-title">
+      <div><span class="eyebrow">MAKE SOMETHING AWESOME</span><h1 id="page-title">Build your 3D print order</h1><p>Pick your prints, choose your colors, and see the exact total before ordering.</p></div>
+      <div class="class-dots" aria-label="Yellow and Blue enrichment classes"><span class="dot yellow"></span><span class="dot blue"></span>Yellow &amp; Blue classes</div>
+    </section>
+    <aside id="absence-notice" class="announcement" hidden><span class="announcement-icon" aria-hidden="true">!</span><div><strong>Store announcement</strong><p id="absence-message"></p></div></aside>
+    <section id="catalog" class="section-block" aria-labelledby="catalog-title">
+      <div class="section-heading"><div><span class="eyebrow">STEP 1</span><h2 id="catalog-title">Choose your prints</h2></div><p>Choose a color to see its exact price.</p></div>
+      <div id="catalog-status" class="state-card loading-state" role="status"><span class="spinner" aria-hidden="true"></span> Loading products…</div>
+      <div id="products" class="product-grid" aria-live="polite"></div>
+    </section>
+    <section id="cart" class="cart-card section-block" aria-labelledby="cart-title">
+      <div class="section-heading cart-heading"><div><span class="eyebrow">STEP 2</span><h2 id="cart-title">Review your cart</h2><p id="cart-count-label">0 items</p></div><strong id="cart-total" class="large-total">$0.00</strong></div>
+      <div id="cart-items" class="cart-items" aria-live="polite"></div>
+      <div class="cart-footer"><button id="clear-cart" class="button button-quiet" type="button" disabled>Clear cart</button><span>Prices are recalculated and locked by the server when you order.</span></div>
+    </section>
+    <section class="checkout-card section-block" aria-labelledby="checkout-title">
+      <div class="section-heading"><div><span class="eyebrow">STEP 3</span><h2 id="checkout-title">Customer information</h2></div><p>We use this only to manage your order.</p></div>
+      <form id="order-form" novalidate>
+        <label>First name <span class="required">Required</span><input name="firstName" required maxlength="40" autocomplete="given-name"></label>
+        <label>Class <span class="required">Required</span><select name="classColor" required><option value="Yellow">Yellow</option><option value="Blue">Blue</option></select></label>
+        <label class="full">Email <span class="required">Required</span><input type="email" name="email" required maxlength="120" autocomplete="email"></label>
+        <label class="full">Order notes <span class="optional">Optional</span><textarea name="notes" maxlength="500" rows="4" placeholder="Anything we should know about your order?"></textarea></label>
+        <fieldset id="payment-methods" class="full payment-choice"><legend>Payment method <span class="required">Required</span></legend><label><input type="radio" name="paymentMethod" value="cash" checked> <span><strong>Cash</strong><small>Pay in person. Exact change is appreciated.</small></span></label><label id="greenlight-choice" hidden><input type="radio" name="paymentMethod" value="greenlight"> <span><strong>Greenlight Pay</strong><small>Open the configured Greenlight link after placing your order. Payment is confirmed manually.</small></span></label></fieldset>
+        <div class="full checkout-policy"><p class="cash-note"><span aria-hidden="true">$</span><strong id="cash-message">Cash is accepted. Exact change is appreciated.</strong></p><p id="price-disclaimer">Prices are subject to change. Once you submit an order, the checkout price is locked in for that order.</p></div>
+        <div id="order-message" class="full form-message" role="alert" aria-live="assertive"></div>
+        <button id="place-order" class="button button-primary button-large full" type="submit">Place order <span id="submit-total">$0.00</span></button>
+      </form>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div class="mobile-cart-bar" id="mobile-cart-bar"><a href="#cart"><span><b id="mobile-cart-count">0</b> items</span><strong id="mobile-cart-total">$0.00</strong><em>View cart</em></a></div>
+  <footer class="site-footer"><div><strong>Enrichment Program 3D Print Orders</strong><span>Cash is accepted. Exact change is appreciated.</span></div><nav aria-label="Footer"><a href="/bug-report">Report a problem</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/accessibility">Accessibility</a></nav></footer>
+</body>
+</html>

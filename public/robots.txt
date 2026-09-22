@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /order/
+
+Sitemap: https://enrichment-3d-print-orders.life-line-gaming-solutions.workers.dev/sitemap.xml
