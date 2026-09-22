@@ -15,6 +15,8 @@ await test('storefront HTML and security headers', async () => {
   assert(response.headers.get('content-type')?.includes('text/html'), 'wrong content type');
   assert(response.headers.get('x-content-type-options') === 'nosniff', 'nosniff missing');
   assert(body.includes('Choose your prints') && body.includes('/theme.js'), 'redesigned storefront missing');
+  assert(body.includes('<option value="High School">High School</option>'), 'High School class option missing');
+  assert(/name="email"(?![^>]*required)/.test(body) && body.includes('Email <span class="optional">Optional</span>'), 'email is still required');
 });
 await test('catalog contract and locked catalog prices', async () => {
   const response = await get('/api/store'); const data = await response.json();

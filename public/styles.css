@@ -28,3 +28,5 @@
 @media (min-width:641px) and (max-width:900px){main{padding-inline:24px}.header-inner{padding-inline:24px}.product-grid{gap:20px}.product-card{min-height:0}.cart-card,.checkout-card{padding:24px}.checkout-card form{grid-template-columns:1fr 1fr}.site-footer{padding-inline:24px}}
 @media (max-width:760px){.header-link{display:none}.cart-jump strong{display:none}}
 @media print{.site-header,.site-footer,.receipt-actions,.theme-toggle{display:none!important}body{background:#fff;color:#000}.receipt-shell{max-width:none;padding:0}.receipt-card{box-shadow:none;border:0;padding:0}.payment-panel{border:1px solid #bbb;background:#fff}.receipt-total strong{color:#000}}
+/* Neutral marker for the High School class. */
+.dot.high-school{background:var(--surface);border:2px solid var(--muted);margin-left:8px}

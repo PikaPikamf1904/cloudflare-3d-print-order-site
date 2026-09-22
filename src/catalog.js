@@ -35,13 +35,13 @@ async function validate(e, b, old) {
   const names = new Set(), ids = new Set();
   for (const c of b.colors) {
     keys(c,['id','color','priceCents','enabled','sortOrder','swatch']);
-    const color = str(c.color,'Variant name',40,true), lower = color.toLowerCase();
-    if (names.has(lower)) fail('Variant names must be unique.'); names.add(lower);
+    const color = str(c.color,'Color name',40,true), lower = color.toLowerCase();
+    if (names.has(lower)) fail('Color names must be unique.'); names.add(lower);
     if (old && ['infinity-cube','weighted-cube'].includes(old.id) && !['white','green'].includes(lower)) fail('Existing Infinity Cubes allow White and Green only.');
     if (c.id !== undefined && (!old?.colors.some(x => x.id === c.id) || ids.has(c.id))) fail('Invalid variant identifier.');
     if (c.id) ids.add(c.id);
     const swatch = str(c.swatch ?? '', 'Swatch',7); if (swatch && !/^#[0-9a-f]{6}$/i.test(swatch)) fail('Swatch must be a six-digit hex color.');
-    p.colors.push({ id: c.id || `var-${crypto.randomUUID()}`, color, priceCents: int(c.priceCents,'Price cents'), enabled: bool(c.enabled), sortOrder: int(c.sortOrder,'Variant sort order',9999), swatch });
+    p.colors.push({ id: c.id || `var-${crypto.randomUUID()}`, color, priceCents: int(c.priceCents,'Price cents'), enabled: bool(c.enabled), sortOrder: int(c.sortOrder,'Color sort order',9999), swatch });
   }
   if (old?.colors.some(c => !ids.has(c.id))) fail('Keep existing variants; disable them instead of deleting.');
   if (p.enabled && !p.colors.some(c => c.enabled)) fail('An enabled product needs an enabled variant.');

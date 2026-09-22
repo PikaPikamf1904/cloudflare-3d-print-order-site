@@ -30,7 +30,7 @@
   <main>
     <section class="welcome" aria-labelledby="page-title">
       <div><span class="eyebrow">MAKE SOMETHING AWESOME</span><h1 id="page-title">Build your 3D print order</h1><p>Pick your prints, choose your colors, and see the exact total before ordering.</p></div>
-      <div class="class-dots" aria-label="Yellow and Blue enrichment classes"><span class="dot yellow"></span><span class="dot blue"></span>Yellow &amp; Blue classes</div>
+      <div class="class-dots" aria-label="Yellow, Blue, and High School classes"><span class="dot yellow"></span><span class="dot blue"></span><span class="dot high-school"></span>Yellow, Blue &amp; High School</div>
     </section>
     <aside id="absence-notice" class="announcement" hidden><span class="announcement-icon" aria-hidden="true">!</span><div><strong>Store announcement</strong><p id="absence-message"></p></div></aside>
     <section id="catalog" class="section-block" aria-labelledby="catalog-title">
@@ -47,8 +47,8 @@
       <div class="section-heading"><div><span class="eyebrow">STEP 3</span><h2 id="checkout-title">Customer information</h2></div><p>We use this only to manage your order.</p></div>
       <form id="order-form" novalidate>
         <label>First name <span class="required">Required</span><input name="firstName" required maxlength="40" autocomplete="given-name"></label>
-        <label>Class <span class="required">Required</span><select name="classColor" required><option value="Yellow">Yellow</option><option value="Blue">Blue</option></select></label>
-        <label class="full">Email <span class="required">Required</span><input type="email" name="email" required maxlength="120" autocomplete="email"></label>
+        <label>Class <span class="required">Required</span><select name="classColor" required><option value="Yellow">Yellow</option><option value="Blue">Blue</option><option value="High School">High School</option></select></label>
+        <label class="full">Email <span class="optional">Optional</span><input type="email" name="email" maxlength="120" autocomplete="email" placeholder="Only needed if you want email follow-up"></label>
         <label class="full">Order notes <span class="optional">Optional</span><textarea name="notes" maxlength="500" rows="4" placeholder="Anything we should know about your order?"></textarea></label>
         <fieldset id="payment-methods" class="full payment-choice"><legend>Payment method <span class="required">Required</span></legend><label><input type="radio" name="paymentMethod" value="cash" checked> <span><strong>Cash</strong><small>Pay in person. Exact change is appreciated.</small></span></label><label id="greenlight-choice" hidden><input type="radio" name="paymentMethod" value="greenlight"> <span><strong>Greenlight Pay</strong><small>Open the configured Greenlight link after placing your order. Payment is confirmed manually.</small></span></label></fieldset>
         <div class="full checkout-policy"><p class="cash-note"><span aria-hidden="true">$</span><strong id="cash-message">Cash is accepted. Exact change is appreciated.</strong></p><p id="price-disclaimer">Prices are subject to change. Once you submit an order, the checkout price is locked in for that order.</p></div>
