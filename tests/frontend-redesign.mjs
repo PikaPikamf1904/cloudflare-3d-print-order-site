@@ -44,13 +44,13 @@ await test('admin APIs require authentication', async () => {
   }
 });
 await test('receipt route and public receipt privacy', async () => {
-  const page = await get('/order/legacy-ava'); const html = await page.text();
+  const page = await get('/order/legacy-test-history'); const html = await page.text();
   assert(page.status === 200 && page.headers.get('content-type')?.includes('text/html'), 'receipt page route failed');
   assert(html.includes('/order.js') && !html.includes('<script>'), 'receipt does not use external script');
-  const response = await get('/api/orders/legacy-ava');
+  const response = await get('/api/orders/legacy-test-history');
   if (response.status === 200) {
     const data = await response.json(); const serialized = JSON.stringify(data);
-    assert(data.order.total_cents === 750, `Ava total changed to ${data.order.total_cents}`);
+    assert(data.order.total_cents === 750, `synthetic locked total changed to ${data.order.total_cents}`);
     assert(!Object.hasOwn(data.order, 'email'), 'public receipt exposes email');
     assert(!Object.hasOwn(data.order, 'admin_note'), 'public receipt exposes admin note');
     assert(!Object.hasOwn(data.order, 'activity'), 'public receipt exposes activity');

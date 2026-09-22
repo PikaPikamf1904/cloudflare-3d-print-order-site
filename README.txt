@@ -52,21 +52,13 @@ The browser suite verifies desktop and 360px layouts, catalog/cart behavior,
 dark mode, receipt privacy, admin login/dashboard/detail views, custom 404, and
 browser console errors. Screenshots are written to ignored test-artifacts/.
 
-Secrets
--------
-Secrets are never put in wrangler.jsonc, HTML, JavaScript, D1, or this archive.
-For a real deployment set these interactively (do not paste values into source):
-
-  wrangler secret put STRIPE_SECRET_KEY
-  wrangler secret put STRIPE_WEBHOOK_SECRET
-  wrangler secret put PAYPAL_CLIENT_ID
-  wrangler secret put PAYPAL_CLIENT_SECRET
-
-Use Stripe test keys and PayPal sandbox while testing. Admin settings only show
-whether the necessary credential bindings are configured; they never return a
-secret. Stripe Checkout uses the order's locked D1 total and raw-body signed
-webhooks. PayPal Orders v2 create/capture is server-controlled and validates the
-locked total again before marking an order paid.
+Payments
+--------
+Cash remains enabled. Greenlight is a manual external payment link: opening it
+does not mark an order paid, and only an authenticated administrator may record
+a payment after independently confirming the full amount. Automated online
+payment processors remain disabled and require a separate future authorization.
+No payment credentials belong in this repository or in D1.
 
 URLs after deployment
 ---------------------
@@ -87,9 +79,9 @@ customer-qr.svg. It only encodes the public customer URL.
 Safety
 ------
 The PowerShell deployment helper performs a dry run only. It intentionally does
-not create a database, execute migrations, or set secrets. Existing historical
-orders, including Ava's $7.50 record, and all submitted line-item price snapshots
-are preserved by the migrations and application code.
+not create a database, execute migrations, or set secrets. Existing production orders and all submitted line-item price snapshots are
+preserved by the migrations and application code. Publishable migrations contain
+schema and configuration only; synthetic history fixtures live under tests/.
 
 Bug reports (migration 0008)
 ----------------------------

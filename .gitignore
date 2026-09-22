@@ -20,6 +20,7 @@ backups/
 *.zip
 *.sql
 !migrations/*.sql
+!tests/fixtures/*.sql
 *.csv
 customer-qr.png
 customer-qr.svg

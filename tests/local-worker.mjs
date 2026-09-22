@@ -39,6 +39,7 @@ export async function startLocalWorker(port = 0) {
   const envFile = join(state, 'test.env');
   await writeFile(envFile, `ADMIN_KEY=${key}\n`, { encoding: 'utf8', mode: 0o600 });
   await run(process.execPath, [wrangler, 'd1', 'migrations', 'apply', 'enrichment-3d-print-orders-db', '--local', '--persist-to', state]);
+  await run(process.execPath, [wrangler, 'd1', 'execute', 'enrichment-3d-print-orders-db', '--local', '--persist-to', state, '--file', join(root, 'tests', 'fixtures', 'synthetic-history.sql')]);
   const args = [wrangler, 'dev', '--local', '--ip', '127.0.0.1', '--port', String(port), '--persist-to', state, '--env-file', envFile, '--log-level', 'debug'];
   const worker = spawn(process.execPath, args, { cwd: root, shell: false, stdio: ['ignore', 'pipe', 'pipe'] });
   let output = '';

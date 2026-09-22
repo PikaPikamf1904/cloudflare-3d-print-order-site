@@ -36,7 +36,7 @@ function renderReceipt(data) {
     if (data.paymentMethods?.cash) { const cash = element('div'); cash.append(element('strong', 'Pay with cash'), element('p', 'Cash is accepted. Exact change is appreciated.')); payment.append(cash); }
     const actions = element('div', undefined, 'payment-actions');
     if (data.paymentMethods?.greenlight && data.greenlight?.url) {
-      const notice = element('p', 'Send the exact amount shown and include your order number with the payment. Your order remains unpaid until the payment is manually confirmed.', 'manual-payment-notice');
+      const notice = element('p', 'Your order is not marked paid until the full payment is manually confirmed. Include your order ID in the payment note.', 'manual-payment-notice');
       const link = element('a', 'Pay with Greenlight', 'button button-primary'); link.href = data.greenlight.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
       actions.append(link, paymentButton('Copy amount', () => copyText(money(order.remainingBalanceCents), 'Amount copied.')), paymentButton('Copy order number', () => copyText(order.id, 'Order number copied.')));
       payment.append(notice);
