@@ -95,3 +95,8 @@ cookies, browser storage, auth headers, or payment data. The authenticated
 Admin **Bug reports** tab supports status, priority, private notes, and
 soft-delete/restore. For a disposable-local D1 test run: `node
 tests/bug-reports-integration.mjs`.
+
+
+Catalog update (migration 0011)
+-------------------------------
+`migrations/0011_catalog_price_update_remove_octopus.sql` raises all non-Kirby catalog prices by $1.00 and disables both octopus products so they no longer appear in the storefront. Existing submitted orders keep their locked historical prices.
