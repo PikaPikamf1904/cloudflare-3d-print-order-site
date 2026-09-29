@@ -22,7 +22,7 @@ await test('catalog contract and locked catalog prices', async () => {
   assert(data.products.length === 4, `expected 4 products, got ${data.products.length}`);
   assert(data.products.reduce((sum, product) => sum + product.colors.length, 0) === 7, 'expected 7 colors');
   const price = (id, color) => data.products.find((product) => product.id === id)?.colors.find((entry) => entry.color === color)?.priceCents;
-  assert(price('ring', 'Standard') === 175, 'Ring is not $1.75');
+  assert(price('ring', 'Standard') === 175, 'Ring is not $1.50');
   assert(price('kirby', 'Red') === 25, 'Red Kirby is not 25 cents');
   assert(!data.products.some((product) => ['octopus','half-octopus'].includes(product.id)), 'Octopus products are still visible');
   assert(price('infinity-cube', 'White') === 175, 'Infinity Cube is not $1.75');
