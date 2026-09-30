@@ -11,7 +11,7 @@ async function call(path, options = {}, authenticated = false) {
 }
 async function test(name, run) { try { await run(); passed += 1; console.log(`PASS ${name}`); } catch (error) { failed += 1; console.error(`FAIL ${name}: ${error.message}`); } }
 async function create({ method = 'cash', email = 'review-fixture@example.invalid', klass = 'Yellow', firstName = 'Admin Review Fixture' } = {}) {
-  const result = await call('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ firstName, classColor: klass, email, paymentMethod: method, items: [{ productId: 'ring', color: 'Standard', quantity: 1 }] }) });
+  const result = await call('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ firstName, classColor: klass, email, paymentMethod: method, items: [{ productId: 'kirby', color: 'Red', quantity: 3 }] }) });
   assert(result.response.status === 201, result.data.error || `order creation returned ${result.response.status}`); created.push(result.data.orderId); await new Promise(resolve => setTimeout(resolve, 8)); return result.data;
 }
 const detail = id => call(`/api/admin/orders/${encodeURIComponent(id)}`, {}, true);
@@ -71,7 +71,7 @@ try {
     const formula = await create({ method: 'cash', email: '', klass: 'Blue', firstName: '=2+3' });
     const response = await fetch(`${base}/api/admin/export`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-admin-key': key }, body: JSON.stringify({ q: '=2+3', email: 'missing' }) }); const csv = await response.text();
     assert(response.status === 200 && csv.includes(formula.orderId) && csv.includes('"\'=2+3"'), 'CSV did not neutralize a formula-like first name');
-    const row = csv.split('\r\n').find(line => line.includes(formula.orderId)); assert(row && /,"Blue","","Ring",/.test(row), 'CSV did not preserve the blank email field safely');
+    const row = csv.split('\r\n').find(line => line.includes(formula.orderId)); assert(row && /,"Blue","","Kirby",/.test(row), 'CSV did not preserve the blank email field safely');
   });
 
   await test('payment review transitions require Admin auth, log fixed safe actions, and never alter payment or order data', async () => {

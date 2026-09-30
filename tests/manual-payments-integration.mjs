@@ -26,7 +26,7 @@ try {
   await test('Greenlight checkout stays unpaid and receipt exposes only the safe manual link', async () => {
     const order = await create('greenlight'); const receipt = await call(`/api/orders/${encodeURIComponent(order.orderId)}`); const serialized = JSON.stringify(receipt.data);
     assert(receipt.data.order.payment_method === 'Greenlight Pay' && receipt.data.order.paymentStatus === 'Unpaid', 'Greenlight order was not left unpaid');
-    assert(receipt.data.order.remainingBalanceCents === 75 && receipt.data.greenlight.url === 'https://gl.me/u/gqpcpm2TtjkK', 'receipt amount or link is wrong');
+    assert(receipt.data.order.remainingBalanceCents === 150 && receipt.data.greenlight.url === 'https://gl.me/u/gqpcpm2TtjkK', 'receipt amount or link is wrong');
     assert(!serialized.includes('payment-test@example.invalid') && !serialized.includes('private_reference') && !serialized.includes('admin_note'), 'public receipt exposed a private field');
     const afterLink = await call(`/api/orders/${encodeURIComponent(order.orderId)}?returned=greenlight`); assert(afterLink.data.order.paymentStatus === 'Unpaid', 'returning from Greenlight marked the order paid');
   });
@@ -34,13 +34,13 @@ try {
     const order = await create('cash');
     for (const amountCents of [0, -1, 1.5, 'abc']) { const invalid = await postPayment(order.orderId, { method: 'cash', amountCents }); assert(invalid.response.status === 400, `invalid amount ${amountCents} was accepted`); }
     let result = await postPayment(order.orderId, { method: 'cash', amountCents: 25, reference: 'local fixture' });
-    assert(result.response.status === 200 && result.data.order.paymentStatus === 'Partially paid' && result.data.order.remainingBalanceCents === 50, 'partial payment balance is wrong');
-    const over = await postPayment(order.orderId, { method: 'greenlight', amountCents: 51 }); assert(over.response.status === 400, 'overpayment was accepted');
-    result = await postPayment(order.orderId, { method: 'greenlight', amountCents: 50, reference: 'local fixture exact' });
+    assert(result.response.status === 200 && result.data.order.paymentStatus === 'Partially paid' && result.data.order.remainingBalanceCents === 125, 'partial payment balance is wrong');
+    const over = await postPayment(order.orderId, { method: 'greenlight', amountCents: 126 }); assert(over.response.status === 400, 'overpayment was accepted');
+    result = await postPayment(order.orderId, { method: 'greenlight', amountCents: 125, reference: 'local fixture exact' });
     assert(result.data.order.paymentStatus === 'Paid' && result.data.order.remainingBalanceCents === 0 && result.data.order.paid_at, 'exact total did not mark paid');
     const payment = result.data.order.payments.find((entry) => entry.manual && entry.method === 'greenlight' && entry.status === 'completed'); assert(payment, 'manual Greenlight history missing');
     const reversed = await call(`/api/admin/orders/${encodeURIComponent(order.orderId)}/payments/${encodeURIComponent(payment.id)}/reverse`, { method: 'POST' }, true);
-    assert(reversed.response.status === 200 && reversed.data.order.paymentStatus === 'Partially paid' && reversed.data.order.remainingBalanceCents === 50, 'reversal did not restore the balance');
+    assert(reversed.response.status === 200 && reversed.data.order.paymentStatus === 'Partially paid' && reversed.data.order.remainingBalanceCents === 125, 'reversal did not restore the balance');
     assert(reversed.data.order.payments.some((entry) => entry.id === payment.id && entry.status === 'reversed'), 'reversed payment history was deleted');
     assert(reversed.data.order.activity.some((entry) => entry.action === 'manual_payment_recorded') && reversed.data.order.activity.some((entry) => entry.action === 'manual_payment_reversed'), 'manual payment audit entries are missing');
   });

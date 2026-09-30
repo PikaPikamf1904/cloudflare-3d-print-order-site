@@ -22,10 +22,10 @@ await test('catalog contract and locked catalog prices', async () => {
   const response = await get('/api/store'); const data = await response.json();
   assert(response.status === 200, `status ${response.status}`);
   assert(data.products.length === 4, `expected 4 products, got ${data.products.length}`);
-  assert(data.products.reduce((sum, product) => sum + product.colors.length, 0) === 7, 'expected 7 colors');
+  assert(data.products.reduce((sum, product) => sum + product.colors.length, 0) === 10, 'expected 10 colors');
   const price = (id, color) => data.products.find((product) => product.id === id)?.colors.find((entry) => entry.color === color)?.priceCents;
-  assert(price('ring', 'Standard') === 175, 'Ring is not $1.50');
-  assert(price('kirby', 'Red') === 25, 'Red Kirby is not 25 cents');
+  assert(['Standard','Blue','Yellow'].every((color) => price('ring', color) === 150), 'Ring Standard/Blue/Yellow are not $1.50');
+  assert(price('kirby', 'Red') === 25 && price('kirby', 'White') === 20 && price('kirby', 'Green') === 20, 'Kirby prices changed');
   assert(!data.products.some((product) => ['octopus','half-octopus'].includes(product.id)), 'Octopus products are still visible');
   assert(price('infinity-cube', 'White') === 175, 'Infinity Cube is not $1.75');
   assert(price('weighted-cube', 'White') === 225, 'Weighted Infinity Cube is not $2.25');
