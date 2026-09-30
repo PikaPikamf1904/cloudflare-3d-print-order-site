@@ -1,7 +1,7 @@
 import { startLocalWorker, stopLocalWorker, runTestFile } from './local-worker.mjs';
 
 const context = await startLocalWorker();
-const files = ['tests/bug-reports-integration.mjs', 'tests/storefront-smoke.mjs', 'tests/frontend-redesign.mjs', 'tests/admin-redesign-integration.mjs', 'tests/manual-payments-integration.mjs', 'tests/admin-search-review-integration.mjs', 'tests/browser-ui.mjs', 'tests/catalog-integration.mjs'];
+const files = ['tests/bug-reports-integration.mjs', 'tests/storefront-smoke.mjs', 'tests/frontend-redesign.mjs', 'tests/admin-redesign-integration.mjs', 'tests/manual-payments-integration.mjs', 'tests/admin-search-review-integration.mjs', 'tests/browser-ui.mjs', 'tests/catalog-integration.mjs', 'tests/media-integration.mjs', 'tests/media-failures.mjs', 'tests/media-browser.mjs'];
 let totalPassed = 0;
 let totalFailed = 0;
 try {

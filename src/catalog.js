@@ -9,10 +9,15 @@ function int(x, name, max = 100000) { if (!Number.isInteger(x) || x < 0 || x > m
 function bool(x) { if (typeof x !== 'boolean') fail('Enabled must be true or false.'); return x; }
 
 export async function readCatalog(e, all = false) {
-  const products = (await e.DB.prepare(`SELECT * FROM catalog_products ${all ? '' : 'WHERE enabled=1 AND archived_at IS NULL'} ORDER BY sort_order,id`).all()).results;
-  const colors = (await e.DB.prepare(`SELECT c.* FROM catalog_product_colors c JOIN catalog_products p ON p.id=c.product_id ${all ? '' : 'WHERE p.enabled=1 AND p.archived_at IS NULL AND c.enabled=1'} ORDER BY c.sort_order,c.public_id`).all()).results;
-  return products.map(p => ({ id: p.id, name: p.name, description: p.description || '', imageUrl: p.image_url || '', imageAlt: p.image_alt || '', enabled: !!p.enabled, sortOrder: p.sort_order,
-    ...(all ? { archivedAt: p.archived_at, version: p.version } : {}),
+  const [productResult,colorResult,mediaResult]=await e.DB.batch([
+    e.DB.prepare(`SELECT * FROM catalog_products ${all ? '' : 'WHERE enabled=1 AND archived_at IS NULL'} ORDER BY sort_order,id`),
+    e.DB.prepare(`SELECT c.* FROM catalog_product_colors c JOIN catalog_products p ON p.id=c.product_id ${all ? '' : 'WHERE p.enabled=1 AND p.archived_at IS NULL AND c.enabled=1'} ORDER BY c.sort_order,c.public_id`),
+    e.DB.prepare("SELECT id,product_id,alt,animated,content_type,preview_key FROM product_media WHERE state='ready' ORDER BY sort_order,id")
+  ]);
+  const products=productResult.results,colors=colorResult.results,mediaRows=mediaResult.results;
+  const media=new Map(products.map(p=>[p.id,mediaRows.filter(x=>x.product_id===p.id).map(x=>({id:x.id,url:`/media/${x.id}`,...(x.preview_key?{previewUrl:`/media/${x.id}/preview`}:{}),alt:x.alt,animated:!!x.animated,type:x.content_type}))]));
+  return products.map(p => ({ id: p.id, name: p.name, description: p.description || '', imageUrl: p.image_url || '', imageAlt: p.image_alt || '', enabled: !!p.enabled, sortOrder: p.sort_order, media:media.get(p.id),
+    ...(all ? { archivedAt: p.archived_at, version: p.version, mediaVersion:p.media_version } : {}),
     colors: colors.filter(c => c.product_id === p.id).map(c => ({ ...(all ? { id: c.public_id } : {}), color: c.color, priceCents: c.price_cents, enabled: !!c.enabled, sortOrder: c.sort_order, swatch: c.swatch || '' }))
   })).filter(p => all || p.colors.length);
 }
@@ -25,7 +30,7 @@ async function payload(r) {
   try { const bytes = new Uint8Array(size); let pos = 0; for (const c of chunks) { bytes.set(c, pos); pos += c.length; } return JSON.parse(new TextDecoder().decode(bytes)); } catch { fail('Invalid JSON.'); }
 }
 async function validate(e, b, old) {
-  keys(b, ['name','description','imageUrl','imageAlt','enabled','sortOrder','colors', ...(old ? ['version'] : [])]);
+  keys(b, ['name','description','imageUrl','imageAlt','enabled','sortOrder','colors', ...(old ? ['version','media','mediaVersion'] : [])]);
   if (old && b.version !== old.version) fail('This product changed. Reload before saving; your changes have not been applied.', 409);
   const p = { name: str(b.name,'Product name',80,true), description: str(b.description ?? '', 'Description',500), enabled: bool(b.enabled), sortOrder: int(b.sortOrder,'Sort order',9999), imageAlt: str(b.imageAlt ?? '', 'Image alt text',200), colors: [] };
   try { p.imageUrl = ProductTools.imageUrl(str(b.imageUrl ?? '', 'Image URL',1000)); } catch (x) { fail(x.message); }

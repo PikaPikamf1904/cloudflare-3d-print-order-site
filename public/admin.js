@@ -27,6 +27,7 @@ function setConnection(ok, label = ok ? 'Connected' : 'Connection issue') {
 }
 async function api(path, options = {}) {
   const response = await fetch(path, { ...options, headers: { accept: 'application/json', ...(options.headers || {}), 'x-admin-key': adminKey } });
+  if(options.responseType==='blob'&&response.ok)return response.blob();
   let data = {};
   try { data = await response.json(); } catch { /* non-JSON admin failures are converted below */ }
   if (!response.ok) {

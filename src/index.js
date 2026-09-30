@@ -74,6 +74,7 @@ async function asset(path,r,e,secure=false,status){const a=await e.ASSETS.fetch(
 export default {
   async fetch(r,e){
     try{
+      const media=await mediaRoutes(r,e,{admin,json,decodeWebp});if(media)return media;
       const managed=await catalogRoutes(r,e,{admin,json});if(managed)return managed;
       const u=new URL(r.url),p=u.pathname,detailRoute=p.match(/^\/api\/admin\/orders\/([^/]+)$/),actionRoute=p.match(/^\/api\/admin\/orders\/([^/]+)\/(trash|restore)$/),manualPaymentRoute=p.match(/^\/api\/admin\/orders\/([^/]+)\/payments$/),manualReverseRoute=p.match(/^\/api\/admin\/orders\/([^/]+)\/payments\/([^/]+)\/reverse$/),paymentReviewRoute=p.match(/^\/api\/admin\/orders\/([^/]+)\/payment-review$/),bugDetailRoute=p.match(/^\/api\/admin\/bug-reports\/([^/]+)$/),bugActionRoute=p.match(/^\/api\/admin\/bug-reports\/([^/]+)\/(trash|restore)$/),payRoute=p.match(/^\/api\/orders\/([^/]+)\/pay\/(cash|stripe|paypal)$/),captureRoute=p.match(/^\/api\/orders\/([^/]+)\/pay\/paypal\/capture$/);
       if(r.method==='POST'&&p==='/api/webhooks/stripe')return stripeWebhook(r,e);
@@ -111,3 +112,5 @@ export default {
   }
 };
 import { readCatalog, catalogRoutes, legacyCatalogUpdate } from './catalog.js';
+import { mediaRoutes } from './media.js';
+import { decodeWebp } from './webp-decoder.js';

@@ -172,6 +172,7 @@ function renderCatalog() {
     add.addEventListener('click', () => addItem(product.id, { value: selectedColor.color }));
     const description = document.createElement('p'); description.textContent = product.description || '';
     card.append(accent, ProductTools.picture(product), title, description, starting, label, swatches, priceRow, add);
+    if(MediaTools.items(product).length){const browse=document.createElement('button');browse.type='button';browse.className='button button-secondary gallery-open';browse.textContent=`View photos (${MediaTools.items(product).length})`;browse.setAttribute('aria-label',`View photos of ${product.name}`);browse.addEventListener('click',()=>ProductGallery.open(product,browse));card.insertBefore(browse,title);}
     box.append(card);
   });
 }
