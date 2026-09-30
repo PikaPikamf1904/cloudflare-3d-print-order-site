@@ -199,3 +199,51 @@ At task start, `src/index.js`, `public/order.js`,
 already modified. Their changes were preserved; only `src/index.js` needed further
 feature integration. There were no repository `AGENTS.md` files found for this
 checkout.
+
+## Release status — September 29, 2026
+
+**Blocked on R2 enablement.** `wrangler r2 bucket list` returns Cloudflare API error
+10042 ("Please enable R2 through the Cloudflare Dashboard"). R2 must be enabled by the
+account owner in Dashboard → R2 (this requires accepting R2 terms and a payment method,
+even for free-tier usage). The Worker cannot deploy with the `PRODUCT_MEDIA` binding
+until `enrichment-3d-print-product-media` exists. Nothing was deployed or migrated.
+
+Verified read-only: account `da89f8e9…`, Worker `enrichment-3d-print-orders` live version
+`a1299cbc-c7b3-4ed3-8e09-93996546b366` (Sept 22), D1 `enrichment-3d-print-orders-db`
+with 0001–0012 applied and only 0013 (plus the new 0014) pending. Catalog matches the
+required prices; no product has an `image_url` set.
+
+Additional fixes found during release prep:
+
+- **Cloudinary URLs**: the validator rejected extensionless delivery URLs, the SDK
+  `?_a=` query, `%20` names and pasted whitespace. Cloudinary `image/upload` URLs are
+  now accepted (query dropped); share-page links get a specific message. The legacy URL
+  field still requires alt text of at least 3 characters.
+- **Ring could not be saved in the admin** (any field, including the image URL):
+  0012 inserted Ring Blue/Yellow with `public_id` NULL (confirmed in production).
+  `0014_backfill_variant_public_ids.sql` backfills the IDs; data-only.
+- **Drag and drop**: the whole Photos section is the drop target with a hover state;
+  stray drops elsewhere no longer open the file and discard unsaved edits; files added
+  during an upload are queued. Covered by a real Chrome drag-event test.
+- Admin CSP now allows `blob:` previews.
+
+Local: `npm run test:local` 161 passed, 0 failed; `wrangler deploy --dry-run` passed.
+
+### Release sequence once R2 is enabled
+
+```powershell
+npx wrangler r2 bucket create enrichment-3d-print-product-media
+npx wrangler d1 export enrichment-3d-print-orders-db --remote --output backups/pre-media-<timestamp>.sql
+npx wrangler d1 migrations list enrichment-3d-print-orders-db --remote   # expect only 0013, 0014
+npx wrangler d1 migrations apply enrichment-3d-print-orders-db --remote  # before deploy: new code reads product_media
+npx wrangler deploy
+```
+
+### Rollback
+
+- Worker: `npx wrangler rollback a1299cbc-c7b3-4ed3-8e09-93996546b366`. The old Worker
+  ignores the additive 0013 columns/table and the 0014 IDs, so no schema rollback is needed.
+- Data: 0013/0014 change no business data. Last resort only (discards later orders):
+  `npx wrangler d1 time-travel restore enrichment-3d-print-orders-db --timestamp=<pre-migration ISO time>`,
+  or restore from the private export in `backups/`.
+- R2: leave uploaded objects in place; they are unreachable without the media Worker.
